@@ -6,7 +6,7 @@ import time
 from telegram import Bot
 
 # Configuración del bot
-TOKEN = 'TU_TOKEN_DE_TELEGRAM'
+TOKEN = 7889975807:AAEI9-wBypSY30hPr1cRIKc14Kargmd6i-g
 CHANNEL_ID = '@TU_CANAL'
 
 bot = Bot(token=TOKEN)
