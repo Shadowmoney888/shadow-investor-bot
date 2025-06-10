@@ -7,7 +7,7 @@ from telegram import Bot
 
 # Configuración del bot
 TOKEN = TOKEN = "7889975807:AAEI9-wBypSY30hPr1cRIKc14Kargmd6i-g"
-CHANNEL_ID = '@TU_CANAL'
+CHANNEL_ID = '-1002777400942'
 
 bot = Bot(token=TOKEN)
 
