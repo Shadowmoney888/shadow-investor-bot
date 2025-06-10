@@ -1,4 +1,3 @@
-
 import logging
 import random
 import requests
@@ -47,14 +46,14 @@ def fetch_news():
     except Exception as e:
         print(f"❌ Error al obtener noticias: {e}")
 
-# Alternar tareas diarias
+# Alternar tareas cada minuto
 def daily_post():
     if random.choice([True, False]):
         send_phrase()
     else:
         fetch_news()
 
-schedule.every().day.at("10:00").do(daily_post)
+schedule.every(1).minutes.do(daily_post)
 daily_post()
 
 print("🟢 Bot autónomo ejecutándose...")
@@ -62,3 +61,4 @@ print("🟢 Bot autónomo ejecutándose...")
 while True:
     schedule.run_pending()
     time.sleep(10)
+
