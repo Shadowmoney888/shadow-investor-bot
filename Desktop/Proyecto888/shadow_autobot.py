@@ -26,7 +26,7 @@ bot = Bot(token=BOT_TOKEN)
 def send_phrase():
     phrase = random.choice(PHRASES)
     try:
-        bot.send_message(chat_id=CHANNEL_ID, text=phrase, parse_mode='Markdown')
+        await bot.send_message(chat_id=CHANNEL_ID, text=phrase, parse_mode='Markdown')
         print("✅ Frase enviada correctamente.")
     except TelegramError as e:
         print(f"❌ Error al enviar frase: {e}")
