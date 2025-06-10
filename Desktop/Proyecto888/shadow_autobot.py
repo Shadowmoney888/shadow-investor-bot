@@ -1,64 +1,38 @@
-import logging
-import random
+import asyncio
 import requests
 from bs4 import BeautifulSoup
 from telegram import Bot
-from telegram.error import TelegramError
+import random
 import schedule
 import time
 
-# Token del bot y canal
-BOT_TOKEN = '7889975807:AAEI9-wBypSY30hPr1cRIKc14Kargmd6i-g'
-CHANNEL_ID = '-1002777400942'
+TOKEN = 'TU_TOKEN_DEL_BOT'
+CHANNEL_ID = '@NOMBRE_DEL_CANAL'  # o el ID numérico
 
-# Frases financieras
-PHRASES = [
-    "💼 *La riqueza no se grita. Se construye en silencio.*\n\n📌 Consejo del día: Diversifica tu dinero, pero nunca tu atención.",
-    "💰 *El dinero ama el silencio.*\n\nInvierte en activos que generen ingresos mientras duermes.",
-    "👤 *Los millonarios se hacen en las sombras, no en el escenario.*\n\nEstudia más de lo que posteas.",
-    "📈 *El dinero inteligente observa, el dinero impulsivo reacciona.*\n\nSé paciente y constante.",
-    "💸 *No trabajes por dinero. Haz que el dinero trabaje para ti.*"
-]
+bot = Bot(token=TOKEN)
 
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=BOT_TOKEN)
+def obtener_frase():
+    url = "https://www.proyectoaprender.org/frases-para-reflexionar/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    frases = soup.find_all("li")
+    lista_frases = [frase.get_text(strip=True) for frase in frases]
+    return random.choice(lista_frases)
 
-def send_phrase():
-    phrase = random.choice(PHRASES)
-    try:
-        await bot.send_message(chat_id=CHANNEL_ID, text=phrase, parse_mode='Markdown')
-        print("✅ Frase enviada correctamente.")
-    except TelegramError as e:
-        print(f"❌ Error al enviar frase: {e}")
+async def enviar_frase():
+    phrase = obtener_frase()
+    print("🟢 Bot autónomo ejecutándose...")
+    await bot.send_message(chat_id=CHANNEL_ID, text=phrase, parse_mode='Markdown')
+    print("✅ Frase enviada correctamente.")
 
-def fetch_news():
-    try:
-        url = 'https://es.finance.yahoo.com/'
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        headlines = soup.select('h3')  # Titulares
-        for h in headlines:
-            text = h.get_text(strip=True)
-            if 50 < len(text) < 150:
-                bot.send_message(chat_id=CHANNEL_ID, text=f"📰 *Noticia destacada:*\n{text}", parse_mode='Markdown')
-                print("✅ Noticia publicada.")
-                break
-    except Exception as e:
-        print(f"❌ Error al obtener noticias: {e}")
+def tarea_programada():
+    asyncio.run(enviar_frase())
 
-# Alternar tareas cada minuto
-def daily_post():
-    if random.choice([True, False]):
-        send_phrase()
-    else:
-        fetch_news()
+# Programa la tarea cada 1 minuto (puedes cambiar esto)
+schedule.every(1).minutes.do(tarea_programada)
 
-schedule.every(1).minutes.do(daily_post)
-daily_post()
-
-print("🟢 Bot autónomo ejecutándose...")
+print("📡 Bot en espera...")
 
 while True:
     schedule.run_pending()
-    time.sleep(10)
-
+    time.sleep(1)
