@@ -1,34 +1,30 @@
-import asyncio
 import requests
 from bs4 import BeautifulSoup
-from telegram import Bot
-import random
+import asyncio
 import schedule
 import time
+from telegram import Bot
 
-TOKEN = 'TU_TOKEN_DEL_BOT'
-CHANNEL_ID = '@NOMBRE_DEL_CANAL'  # o el ID numérico
+# Configuración del bot
+TOKEN = 'TU_TOKEN_DE_TELEGRAM'
+CHANNEL_ID = '@TU_CANAL'
 
 bot = Bot(token=TOKEN)
 
 def obtener_frase():
-    url = "https://www.proyectoaprender.org/frases-para-reflexionar/"
+    url = "https://quotes.toscrape.com/"
     response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    frases = soup.find_all("li")
-    lista_frases = [frase.get_text(strip=True) for frase in frases]
-    return random.choice(lista_frases)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    frase = soup.select_one('.quote .text').text
+    return frase
 
 async def enviar_frase():
     phrase = obtener_frase()
-    print("🟢 Bot autónomo ejecutándose...")
     await bot.send_message(chat_id=CHANNEL_ID, text=phrase, parse_mode='Markdown')
-    print("✅ Frase enviada correctamente.")
 
 def tarea_programada():
     asyncio.run(enviar_frase())
 
-# Programa la tarea cada 1 minuto (puedes cambiar esto)
 schedule.every(1).minutes.do(tarea_programada)
 
 print("📡 Bot en espera...")
